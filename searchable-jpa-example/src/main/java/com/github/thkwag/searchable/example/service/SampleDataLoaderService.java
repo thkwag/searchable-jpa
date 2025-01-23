@@ -27,7 +27,7 @@ public class SampleDataLoaderService {
     private final AuthorRepository authorRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final Faker faker = new Faker(new Locale("en"));
+    private final Faker faker = new Faker(Locale.forLanguageTag("en"));
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional

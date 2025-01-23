@@ -293,7 +293,8 @@ class TestPostSearchServiceTest {
                 .containsExactlyInAnyOrder(post1.getId(), post4.getId(), post5.getId());
     }
 
-    @Test
+    @SuppressWarnings("unused")
+@Test
     @DisplayName("Search posts with extremely complex nested conditions")
     void searchWithSuperComplexNestedConditions() throws JsonProcessingException {
         // Given

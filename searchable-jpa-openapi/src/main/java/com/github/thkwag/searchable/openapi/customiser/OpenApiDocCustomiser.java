@@ -1,6 +1,5 @@
 package com.github.thkwag.searchable.openapi.customiser;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.thkwag.searchable.core.condition.SearchCondition;
 import com.github.thkwag.searchable.openapi.annotation.SearchableParams;
 import com.github.thkwag.searchable.openapi.generator.DescriptionGenerator;
@@ -44,7 +43,7 @@ public class OpenApiDocCustomiser implements OpenApiCustomiser {
 
     public OpenApiDocCustomiser(@Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping) {
         this.handlerMapping = handlerMapping;
-        this.exampleGenerator = new ExampleGenerator(new ObjectMapper());
+        this.exampleGenerator = new ExampleGenerator();
         this.parameterGenerator = new ParameterGenerator();
     }
 

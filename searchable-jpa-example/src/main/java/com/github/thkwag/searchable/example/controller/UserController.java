@@ -40,7 +40,7 @@ public class UserController {
     public ResponseEntity<Page<User>> searchUsers(
             @RequestParam(required = false) @SearchableParams(value = UserDTO.class) Map<String, String> params) {
 
-        SearchCondition condition = new SearchableParamsParser(UserDTO.class).convert(params);
+        SearchCondition<UserDTO> condition = new SearchableParamsParser<UserDTO>(UserDTO.class).convert(params);
         return ResponseEntity.ok(userService.findAllWithSearch(condition));
     }
 } 

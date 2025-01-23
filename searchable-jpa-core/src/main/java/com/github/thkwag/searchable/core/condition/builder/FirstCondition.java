@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  *   <li>Range operations (between, not between)</li>
  * </ul>
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({"UnusedReturnValue"})
 public interface FirstCondition {
     /**
      * Creates a new condition group with AND logic.

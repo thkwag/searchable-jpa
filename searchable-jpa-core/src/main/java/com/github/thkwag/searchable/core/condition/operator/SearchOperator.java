@@ -154,7 +154,6 @@ public enum SearchOperator {
      * @param operator the string name of the operator to find
      * @return the matching SearchOperator, or null if no match is found
      */
-    @SuppressWarnings({"unused"})
     public static SearchOperator fromName(String operator) {
         for (SearchOperator op : values()) {
             if (op.getName().equalsIgnoreCase(operator)) {

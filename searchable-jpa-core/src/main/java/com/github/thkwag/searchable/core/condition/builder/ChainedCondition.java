@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * Extends {@link FirstCondition} to include all basic AND operations while providing additional OR operations.
  * This interface enables fluent API style condition building with method chaining.
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({"UnusedReturnValue"})
 public interface ChainedCondition extends FirstCondition {
     /**
      * Creates a new AND group with nested conditions.

@@ -6,7 +6,6 @@ import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 
-@SuppressWarnings({"unused"})
 public interface SearchableService<T> {
     /**
      * Search entities with given search conditions
