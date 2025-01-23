@@ -12,6 +12,8 @@ ext {
 allprojects {
     group = 'com.github.thkwag.searchable'
     version = '0.0.1-SNAPSHOT'
+    
+    System.setProperty("spring.boot.version.check.enabled", "false")
 }
 
 subprojects {
@@ -96,9 +98,9 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
-        options.compilerArgs << '-parameters'
+        options.compilerArgs.addAll(['-parameters', "-Xlint:-deprecation", "-Xlint:-options"])
     }
 
     test {
