@@ -4,7 +4,8 @@ apply plugin: 'io.spring.dependency-management'
 
 dependencies {
     implementation project(':spring-boot-starter-searchable-jpa')
-    
+    //implementation 'com.github.thkwag.searchable:spring-boot-starter-searchable-jpa:0.0.1-SNAPSHOT'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'

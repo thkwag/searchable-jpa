@@ -12,10 +12,6 @@ ext {
 allprojects {
     group = 'com.github.thkwag.searchable'
     version = '0.0.1-SNAPSHOT'
-    
-    repositories {
-        mavenCentral()
-    }
 }
 
 subprojects {
@@ -56,7 +52,6 @@ subprojects {
                             def projectMetadata = metadata[project.name]
                             setName(projectMetadata['name'])
                             setDescription(projectMetadata['description'])
-                            println "Project Name: ${name.get()}, Description: ${description.get()}"
                         } else {
                             throw new GradleException("No metadata found for project: ${project.name}")
                         }
