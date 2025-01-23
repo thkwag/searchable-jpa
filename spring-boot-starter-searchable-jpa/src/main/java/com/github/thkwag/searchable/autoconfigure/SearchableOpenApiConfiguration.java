@@ -1,6 +1,8 @@
 package com.github.thkwag.searchable.autoconfigure;
 
 import com.github.thkwag.searchable.openapi.customiser.OpenApiDocCustomiser;
+import com.github.thkwag.searchable.properties.SearchableProperties;
+
 import io.swagger.v3.oas.models.OpenAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,15 +12,17 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(SearchableProperties.class)
+@ConditionalOnProperty(name = "searchable.swagger.enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnClass({OpenAPI.class, OpenApiCustomiser.class})
-@ConditionalOnProperty(prefix = "searchable.swagger", name = "enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfiguration
 @AutoConfigureAfter(WebMvcAutoConfiguration.class)
 @ComponentScan(basePackages = "com.github.thkwag.searchable.openapi.customiser")
