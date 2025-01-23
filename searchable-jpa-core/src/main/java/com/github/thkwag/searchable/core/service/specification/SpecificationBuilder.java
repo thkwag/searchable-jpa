@@ -34,7 +34,7 @@ public class SpecificationBuilder<T> {
                 return buildGroup((Group) node, root, query, cb);
             }
             if (node instanceof Condition) {
-                return buildCondition((Condition) node, root);
+                return buildCondition((Condition) node);
             }
             throw new SearchableOperationException(String.format(
                     "Unknown node type: %s. Expected Group or Condition.",
@@ -52,7 +52,7 @@ public class SpecificationBuilder<T> {
         }
     }
 
-    private Predicate buildCondition(Condition condition, Root<T> root) {
+    private Predicate buildCondition(Condition condition) {
         if (condition == null) {
             throw new SearchableOperationException("Condition cannot be null");
         }

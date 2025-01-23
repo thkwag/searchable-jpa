@@ -54,7 +54,6 @@ public class DefaultSearchableService<T, ID> implements SearchableService<T> {
 
     @Override
     @NonNull
-    @SuppressWarnings("unchecked")
     public <P> Page<P> findAllWithSearch(@NonNull SearchCondition<?> searchCondition, Class<P> projectionClass) {
         SpecificationWithPageable<T> spec = createSpecification(searchCondition);
 

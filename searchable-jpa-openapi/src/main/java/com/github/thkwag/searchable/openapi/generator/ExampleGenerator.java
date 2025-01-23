@@ -1,6 +1,5 @@
 package com.github.thkwag.searchable.openapi.generator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.thkwag.searchable.core.annotation.SearchableField;
 import com.github.thkwag.searchable.core.condition.SearchCondition;
 import com.github.thkwag.searchable.core.condition.SearchConditionBuilder;
@@ -13,13 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 @RequiredArgsConstructor
 public class ExampleGenerator {
     private static final Logger log = LoggerFactory.getLogger(ExampleGenerator.class);
-    private final ObjectMapper objectMapper;
 
     public String generateSimpleExample(Class<?> dtoClass) {
         try {
@@ -37,32 +33,6 @@ public class ExampleGenerator {
             return condition.toJson();
         } catch (Exception e) {
             log.error("Error generating complete example: {}", e.getMessage(), e);
-            return "{}";
-        }
-    }
-
-    public String generateSimpleUpdateExample(Class<?> dtoClass, Class<?> updateDtoType) {
-        try {
-            Map<String, Object> example = new HashMap<>();
-            SearchCondition<?> condition = buildSearchCondition(dtoClass, true);
-            example.put("searchCondition", objectMapper.readValue(condition.toJson(), Map.class));
-            example.put("updateData", buildUpdateData(updateDtoType));
-            return objectMapper.writeValueAsString(example);
-        } catch (Exception e) {
-            log.error("Error generating simple update example: {}", e.getMessage(), e);
-            return "{}";
-        }
-    }
-
-    public String generateCompleteUpdateExample(Class<?> dtoClass, Class<?> updateDtoType) {
-        try {
-            Map<String, Object> example = new HashMap<>();
-            SearchCondition<?> condition = buildSearchCondition(dtoClass, false);
-            example.put("searchCondition", objectMapper.readValue(condition.toJson(), Map.class));
-            example.put("updateData", buildUpdateData(updateDtoType));
-            return objectMapper.writeValueAsString(example);
-        } catch (Exception e) {
-            log.error("Error generating complete update example: {}", e.getMessage(), e);
             return "{}";
         }
     }
@@ -111,23 +81,8 @@ public class ExampleGenerator {
         }
     }
 
-    private Map<String, Object> buildUpdateData(Class<?> updateDtoType) {
-        Map<String, Object> updateData = new HashMap<>();
-        for (Field field : updateDtoType.getDeclaredFields()) {
-            final Object rawExampleValue = OpenApiDocUtils.getExampleValue(field);
-            if (rawExampleValue != null) {
-                final Object exampleValue = convertToTargetType(rawExampleValue, field.getType());
-                updateData.put(field.getName(), exampleValue);
-            }
-        }
-        return updateData;
-    }
-
     private void applyOperator(SearchOperator operator, Object exampleValue, String fieldName, FirstCondition w) {
         switch (operator) {
-            case EQUALS:
-                w.equals(fieldName, exampleValue);
-                break;
             case NOT_EQUALS:
                 w.notEquals(fieldName, exampleValue);
                 break;
@@ -179,6 +134,7 @@ public class ExampleGenerator {
             case NOT_BETWEEN:
                 w.notBetween(fieldName, exampleValue, exampleValue);
                 break;
+            case EQUALS:
             default:
                 w.equals(fieldName, exampleValue);
         }
@@ -222,7 +178,7 @@ public class ExampleGenerator {
             }
             // Character
             else if (fieldType == Character.class || fieldType == char.class) {
-                return strValue.length() > 0 ? strValue.charAt(0) : '\0';
+                return !strValue.isEmpty() ? strValue.charAt(0) : '\0';
             }
             // Date/Time types
             else if (fieldType == java.time.LocalDateTime.class) {

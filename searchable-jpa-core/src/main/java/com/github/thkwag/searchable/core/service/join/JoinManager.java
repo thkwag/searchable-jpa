@@ -21,11 +21,10 @@ public class JoinManager<T> {
      * Creates a new JoinManager instance.
      *
      * @param entityManager The JPA EntityManager
-     * @param entityClass   The entity class
      * @param root          The root entity
      * @throws IllegalStateException if the EntityManager is not open
      */
-    public JoinManager(@NonNull EntityManager entityManager, @NonNull Class<T> entityClass, @NonNull Root<T> root) {
+    public JoinManager(@NonNull EntityManager entityManager, @NonNull Root<T> root) {
         validateEntityManager(entityManager);
         this.root = root;
     }

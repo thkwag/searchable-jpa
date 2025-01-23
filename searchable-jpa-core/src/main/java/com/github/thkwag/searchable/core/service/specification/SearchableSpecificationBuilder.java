@@ -5,8 +5,6 @@ import com.github.thkwag.searchable.core.condition.SearchCondition.Node;
 import com.github.thkwag.searchable.core.condition.operator.LogicalOperator;
 import com.github.thkwag.searchable.core.service.join.JoinManager;
 import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,10 +24,8 @@ import java.util.stream.Collectors;
  * Thread-safe and immutable implementation.
  *
  * @param <T> The entity type
- * @param <P>
  */
 public class SearchableSpecificationBuilder<T> {
-    private static final Logger log = LoggerFactory.getLogger(SearchableSpecificationBuilder.class);
     private static final int DEFAULT_PAGE_SIZE = 20;
 
     private final SearchCondition<?> condition;
@@ -144,7 +140,7 @@ public class SearchableSpecificationBuilder<T> {
                 query.distinct(true);
             }
 
-            JoinManager<T> joinManager = new JoinManager<>(entityManager, entityClass, root);
+            JoinManager<T> joinManager = new JoinManager<>(entityManager, root);
             PredicateBuilder<T> predicateBuilder = new PredicateBuilder<>(cb, joinManager);
             SpecificationBuilder<T> specBuilder = new SpecificationBuilder<>(predicateBuilder);
             return createPredicates(root, query, cb, specBuilder);

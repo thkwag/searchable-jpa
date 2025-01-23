@@ -98,7 +98,7 @@ public class ParameterGenerator {
                     .name("sort")
                     .in("query")
                     .description("Sort fields (e.g., field.asc or field.desc). Available fields: " +
-                            sortableFields.stream().collect(Collectors.joining(", ")))
+                            String.join(", ", sortableFields))
                     .schema(new Schema<List<String>>()
                             .type("array")
                             .items(new Schema<String>().type("string")))
@@ -135,7 +135,7 @@ public class ParameterGenerator {
     private void setFieldTypeSchema(Schema<?> schema, Class<?> fieldType) {
         if (fieldType == LocalDateTime.class) {
             schema.type("string").format("date-time");
-            schema.description("Format: " + dateFormatter.toString());
+            schema.description("Format: " + dateFormatter);
         } else if (fieldType.isEnum()) {
             schema.type("string");
             @SuppressWarnings({"unchecked"})
