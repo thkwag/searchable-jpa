@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.github.thkwag.searchable.autoconfigure.SearchableOpenApiConfiguration,\
+com.github.thkwag.searchable.autoconfigure.SearchableJpaConfiguration

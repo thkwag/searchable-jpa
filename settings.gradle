@@ -1,0 +1,5 @@
+rootProject.name = 'searchable-jpa'
+include 'searchable-jpa-core'
+include 'searchable-jpa-openapi'
+include 'searchable-jpa-example'
+include 'spring-boot-starter-searchable-jpa'
