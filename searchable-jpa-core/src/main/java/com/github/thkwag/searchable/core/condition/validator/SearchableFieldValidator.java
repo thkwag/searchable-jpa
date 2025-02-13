@@ -96,7 +96,7 @@ public class SearchableFieldValidator<D> {
         if (!invalidOperators.isEmpty()) {
             if (errorMessage.length() > 0) errorMessage.append("\n");
             errorMessage.append(MessageUtils.getMessage("validator.field.not.supported",
-                    new Object[]{String.join(", ", invalidOperators), "search"}));
+                    new Object[]{String.join(", ", invalidOperators)}));
         }
 
         if (!invalidSortFields.isEmpty()) {
