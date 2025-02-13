@@ -50,6 +50,7 @@ jobs:
 
       - name: Build and Publish
         run: |
+          chmod +x ./gradlew
           ./gradlew clean publish --no-daemon
         env:
           USERNAME: ${{ github.actor }}
