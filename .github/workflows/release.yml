@@ -75,9 +75,9 @@ jobs:
         run: |
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 "v${{ github.event.inputs.version }}^" 2>/dev/null || echo "")
           if [ -z "$PREVIOUS_TAG" ]; then
-            NOTES=$(git log --pretty=format:"* %s" "v${{ github.event.inputs.version }}")
+            NOTES=$(git log --pretty=format:"* %s" --no-merges --perl-regexp --author='^((?!github-actions).*)$' "v${{ github.event.inputs.version }}")
           else
-            NOTES=$(git log --pretty=format:"* %s" "$PREVIOUS_TAG..v${{ github.event.inputs.version }}")
+            NOTES=$(git log --pretty=format:"* %s" --no-merges --perl-regexp --author='^((?!github-actions).*)$' "$PREVIOUS_TAG..v${{ github.event.inputs.version }}")
           fi
           echo "notes<<EOF" >> $GITHUB_OUTPUT
           echo "$NOTES" >> $GITHUB_OUTPUT
