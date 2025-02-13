@@ -43,25 +43,16 @@ jobs:
       - name: Update version in build.gradle
         run: |
           sed -i "s/version = '.*'/version = '${{ github.event.inputs.version }}'/" build.gradle
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
+          git config --global user.email "thkwag@gmail.com"
+          git config --global user.name "thkwag"
           git add build.gradle
           git commit -m "release: v${{ github.event.inputs.version }}"
-
-      - name: Delete existing package version (if exists)
-        run: |
-          curl -L \
-            -X DELETE \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/orgs/thkwag/packages/maven/com.github.thkwag.searchable/versions/${{ github.event.inputs.version }} || true
 
       - name: Build and Publish
         run: |
           gradle wrapper
           chmod +x ./gradlew
-          ./gradlew clean publish --no-daemon
+          ./gradlew clean publish --info --stacktrace
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
