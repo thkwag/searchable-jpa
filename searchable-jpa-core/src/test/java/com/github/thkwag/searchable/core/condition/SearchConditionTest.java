@@ -38,7 +38,7 @@ class SearchConditionTest {
         String json = condition.toJson();
         System.out.println(json);
 
-        SearchCondition<TestDTO> deserialized = new SearchCondition<TestDTO>().fromJson(json);
+        SearchCondition<TestDTO> deserialized = SearchCondition.fromJson(json, TestDTO.class);
 
         // then
         assertThat(json).doesNotContain("conditions\":[{\"conditions\":");  // Should not have nested conditions
@@ -49,14 +49,14 @@ class SearchConditionTest {
                 .isInstanceOf(SearchCondition.Condition.class);
         SearchCondition.Condition idCondition = (SearchCondition.Condition) deserialized.getNodes().get(0);
         assertThat(idCondition.getField()).isEqualTo("id");
-        assertThat(idCondition.getValue()).isEqualTo(1L);
+        assertThat(String.valueOf(idCondition.getValue())).isEqualTo("1");
         assertThat(idCondition.getSearchOperator()).isEqualTo(SearchOperator.EQUALS);
 
         // Validate age condition
         assertThat(deserialized.getNodes().get(1))
                 .isInstanceOf(SearchCondition.Condition.class)
-                .extracting("value")
-                .isEqualTo(20L);
+                .extracting(node -> String.valueOf(((SearchCondition.Condition)node).getValue()))
+                .isEqualTo("20");
         SearchCondition.Condition ageCondition = (SearchCondition.Condition) deserialized.getNodes().get(1);
         assertThat(ageCondition.getField()).isEqualTo("age");
         assertThat(ageCondition.getSearchOperator()).isEqualTo(SearchOperator.GREATER_THAN);
@@ -77,7 +77,7 @@ class SearchConditionTest {
         // Validate age OR condition
         SearchCondition.Condition ageOrCondition = (SearchCondition.Condition) andGroup.getNodes().get(1);
         assertThat(ageOrCondition.getField()).isEqualTo("age");
-        assertThat(ageOrCondition.getValue()).isEqualTo(10L);
+        assertThat(String.valueOf(ageOrCondition.getValue())).isEqualTo("10");
         assertThat(ageOrCondition.getSearchOperator()).isEqualTo(SearchOperator.GREATER_THAN);
         assertThat(ageOrCondition.getOperator()).isEqualTo(LogicalOperator.OR);
     }
@@ -97,7 +97,7 @@ class SearchConditionTest {
         // when
         String json = condition.toJson();
         System.out.println(json);
-        SearchCondition<TestDTO> deserialized = new SearchCondition<TestDTO>().fromJson(json);
+        SearchCondition<TestDTO> deserialized = SearchCondition.fromJson(json, TestDTO.class);
 
         // then
         assertThat(json).doesNotContain("conditions\":[{\"conditions\":");  // Should not have nested conditions
@@ -106,7 +106,7 @@ class SearchConditionTest {
         // Validate id condition
         SearchCondition.Condition idCondition = (SearchCondition.Condition) deserialized.getNodes().get(0);
         assertThat(idCondition.getField()).isEqualTo("id");
-        assertThat(idCondition.getValue()).isEqualTo(1L);
+        assertThat(String.valueOf(idCondition.getValue())).isEqualTo("1");
         assertThat(idCondition.getOperator()).isNull();  // First condition has null operator
 
         // Validate name condition
@@ -118,7 +118,7 @@ class SearchConditionTest {
         // Validate age condition
         SearchCondition.Condition ageCondition = (SearchCondition.Condition) deserialized.getNodes().get(2);
         assertThat(ageCondition.getField()).isEqualTo("age");
-        assertThat(ageCondition.getValue()).isEqualTo(20L);
+        assertThat(String.valueOf(ageCondition.getValue())).isEqualTo("20");
         assertThat(ageCondition.getOperator()).isEqualTo(LogicalOperator.AND);
     }
 
@@ -137,7 +137,7 @@ class SearchConditionTest {
         // when
         String json = condition.toJson();
         System.out.println(json);
-        SearchCondition<TestDTO> deserialized = new SearchCondition<TestDTO>().fromJson(json);
+        SearchCondition<TestDTO> deserialized = SearchCondition.fromJson(json, TestDTO.class);
 
         // then
         assertThat(json).doesNotContain("conditions\":[{\"conditions\":");  // Should not have nested conditions
@@ -182,7 +182,7 @@ class SearchConditionTest {
         String json = condition.toJson();
         System.out.println(json);
 
-        SearchCondition<TestDTO> deserialized = new SearchCondition<TestDTO>().fromJson(json);
+        SearchCondition<TestDTO> deserialized = SearchCondition.fromJson(json, TestDTO.class);
 
         // then
         assertThat(json).doesNotContain("conditions\":[{\"conditions\":[{\"conditions\":");  // Should not have deeply nested conditions
@@ -191,13 +191,13 @@ class SearchConditionTest {
         // Validate id condition
         SearchCondition.Condition idCondition = (SearchCondition.Condition) deserialized.getNodes().get(0);
         assertThat(idCondition.getField()).isEqualTo("id");
-        assertThat(idCondition.getValue()).isEqualTo(1L);
+        assertThat(String.valueOf(idCondition.getValue())).isEqualTo("1");
         assertThat(idCondition.getSearchOperator()).isEqualTo(SearchOperator.EQUALS);
 
         // Validate age condition
         SearchCondition.Condition ageCondition = (SearchCondition.Condition) deserialized.getNodes().get(1);
         assertThat(ageCondition.getField()).isEqualTo("age");
-        assertThat(ageCondition.getValue()).isEqualTo(11L);
+        assertThat(String.valueOf(ageCondition.getValue())).isEqualTo("11");
         assertThat(ageCondition.getSearchOperator()).isEqualTo(SearchOperator.GREATER_THAN);
 
         // Validate AND group
@@ -216,7 +216,7 @@ class SearchConditionTest {
         // Validate age OR condition
         SearchCondition.Condition ageOrCondition = (SearchCondition.Condition) andGroup.getNodes().get(1);
         assertThat(ageOrCondition.getField()).isEqualTo("age");
-        assertThat(ageOrCondition.getValue()).isEqualTo(12L);
+        assertThat(String.valueOf(ageOrCondition.getValue())).isEqualTo("12");
         assertThat(ageOrCondition.getSearchOperator()).isEqualTo(SearchOperator.GREATER_THAN);
         assertThat(ageOrCondition.getOperator()).isEqualTo(LogicalOperator.OR);
     }

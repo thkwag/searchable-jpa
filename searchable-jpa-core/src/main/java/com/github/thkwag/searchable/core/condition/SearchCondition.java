@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.github.thkwag.searchable.core.condition.jackson.SearchConditionDeserializer;
 import com.github.thkwag.searchable.core.condition.operator.LogicalOperator;
 import com.github.thkwag.searchable.core.condition.operator.SearchOperator;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -75,7 +76,9 @@ import java.util.List;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Schema(description = "Search condition for filtering and pagination")
+@JsonDeserialize(using = SearchConditionDeserializer.class)
 public class SearchCondition<D> {
+
     /**
      * List of search condition nodes (conditions or groups).
      */
@@ -130,31 +133,20 @@ public class SearchCondition<D> {
         this.size = size;
     }
 
-    /**
-     * Creates an ObjectMapper configured for SearchCondition serialization/deserialization.
-     *
-     * @return configured ObjectMapper instance
-     */
-    private static ObjectMapper createObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        return mapper;
-    }
 
     /**
      * Creates a SearchCondition instance from a JSON string.
      *
      * @param json the JSON string to parse
+     * @param dtoClass the class of the DTO type
      * @return a new SearchCondition instance
      * @throws JsonProcessingException if the JSON is invalid
      */
-    public SearchCondition<D> fromJson(String json) throws JsonProcessingException {
-        return createObjectMapper().readValue(json, new TypeReference<SearchCondition<D>>() {
-        });
+    public static <T> SearchCondition<T> fromJson(String json, Class<T> dtoClass) throws JsonProcessingException {
+        ObjectMapper mapper = createObjectMapper();
+        JavaType type = mapper.getTypeFactory().constructParametricType(SearchCondition.class, dtoClass);
+        return mapper.readValue(json, type);
     }
-
 
     /**
      * Converts this search condition to a JSON string.
@@ -299,8 +291,10 @@ public class SearchCondition<D> {
         /**
          * The entity field name (may differ from DTO field name).
          */
+        @Setter
         @JsonProperty("entityField")
-        private final String entityField;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String entityField;
         /**
          * The logical operator (AND/OR) for combining with other conditions.
          */
@@ -450,5 +444,16 @@ public class SearchCondition<D> {
         public boolean isAscending() {
             return Direction.ASC.equals(direction);
         }
+    }
+
+    /**
+     * Creates an ObjectMapper configured for SearchCondition serialization/deserialization.
+     */
+    private static ObjectMapper createObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        return mapper;
     }
 }
