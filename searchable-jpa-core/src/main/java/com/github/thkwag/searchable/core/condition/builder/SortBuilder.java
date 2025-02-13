@@ -16,6 +16,7 @@ import com.github.thkwag.searchable.core.utils.SearchableFieldUtils;
  * <p>Note: Only fields annotated with {@code @SearchableField(sortable = true)}
  * can be used for sorting.
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class SortBuilder {
     /**
      * The sort instance being built, containing the ordered list of sort criteria.

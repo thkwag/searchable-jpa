@@ -4,6 +4,7 @@ package com.github.thkwag.searchable.core.exception;
  * Exception thrown when there is an error in join operations.
  * This includes invalid join paths, join creation failures, and join cache issues.
  */
+@SuppressWarnings({"unused"})
 public class SearchableJoinException extends SearchableException {
 
     public SearchableJoinException(String message) {

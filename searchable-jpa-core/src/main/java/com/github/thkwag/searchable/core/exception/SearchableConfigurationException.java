@@ -25,6 +25,7 @@ import com.github.thkwag.searchable.core.annotation.SearchableField;
  *
  * @see SearchableField
  */
+@SuppressWarnings({"unused"})
 public class SearchableConfigurationException extends SearchableException {
     /**
      * Constructs a new configuration exception with the specified detail message.

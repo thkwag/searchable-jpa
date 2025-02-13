@@ -21,6 +21,7 @@ import java.util.Objects;
  * Custom deserializer for Node interface implementations.
  * Handles deserialization of both Condition and Group nodes.
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class NodeDeserializer<D> extends JsonDeserializer<Node> {
     @JsonCreator
     public NodeDeserializer() {
