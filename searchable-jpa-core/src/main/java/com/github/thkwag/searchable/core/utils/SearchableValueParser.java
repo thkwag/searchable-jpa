@@ -239,9 +239,7 @@ public class SearchableValueParser {
         } catch (Exception ignored) {
         }
 
-        throw new SearchableParseException(
-                String.format("Unsupported datetime format: '%s'", value),
-                lastError != null ? lastError : new DateTimeParseException("No suitable format found", value, 0));
+        throw new SearchableParseException(String.format("Unsupported datetime format: '%s'", value), lastError);
     }
 
     private static LocalDate parseLocalDate(String value) {
@@ -261,9 +259,7 @@ public class SearchableValueParser {
             }
         }
 
-        throw new SearchableParseException(
-                String.format("Unsupported date format: '%s'", value),
-                lastError != null ? lastError : new DateTimeParseException("No suitable format found", value, 0));
+        throw new SearchableParseException(String.format("Unsupported date format: '%s'", value), lastError);
     }
 
     private static LocalTime parseLocalTime(String value) {
@@ -283,9 +279,7 @@ public class SearchableValueParser {
             }
         }
 
-        throw new SearchableParseException(
-                String.format("Unsupported time format: '%s'", value),
-                lastError != null ? lastError : new DateTimeParseException("No suitable format found", value, 0));
+        throw new SearchableParseException(String.format("Unsupported time format: '%s'", value), lastError);
     }
 
     private static ZonedDateTime parseZonedDateTime(String value) {

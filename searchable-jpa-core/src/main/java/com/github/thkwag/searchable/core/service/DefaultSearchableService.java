@@ -114,8 +114,6 @@ public class DefaultSearchableService<T, ID> implements SearchableService<T> {
                     .setPropertyCondition(ctx -> ctx.getSource() != null)
                     .setMatchingStrategy(org.modelmapper.convention.MatchingStrategies.STRICT);
             updateData = modelMapper.map(updateData, entityClass);
-        } else {
-            updateData = (T) updateData;
         }
 
         try {

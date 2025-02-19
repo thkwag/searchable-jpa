@@ -17,7 +17,6 @@ import com.github.thkwag.searchable.core.condition.validator.SearchableFieldVali
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
 import com.github.thkwag.searchable.core.condition.SearchCondition.Condition;
@@ -63,7 +62,7 @@ public class SearchConditionDeserializer extends JsonDeserializer<SearchConditio
         ObjectMapper mapper = (ObjectMapper) p.getCodec();
         JsonNode jsonNode = mapper.readTree(p);
         
-        SearchCondition<?> searchCondition = new SearchCondition<>();
+        SearchCondition<Object> searchCondition = new SearchCondition<>();
         
         // conditions
         if (jsonNode.has("conditions")) {
@@ -101,10 +100,10 @@ public class SearchConditionDeserializer extends JsonDeserializer<SearchConditio
             Class<Object> typedDtoClass = (Class<Object>) dtoClass;
             
             // First validate @SearchableField annotations
-            new SearchableFieldValidator<Object>(typedDtoClass, (SearchCondition<Object>) searchCondition).validate();
+            new SearchableFieldValidator<>(typedDtoClass, searchCondition).validate();
 
             // Then validate constraints
-            new SearchConditionValidator<Object>(typedDtoClass, (SearchCondition<Object>) searchCondition).validate();
+            new SearchConditionValidator<>(typedDtoClass, searchCondition).validate();
 
             // Set entityField
             for (Node node : searchCondition.getNodes()) {

@@ -24,7 +24,6 @@ package com.github.thkwag.searchable.core.exception;
  * @see RuntimeException
  * @see SearchableConfigurationException
  */
-@SuppressWarnings({"unused"})
 public class SearchableException extends RuntimeException {
     /**
      * Constructs a new searchable exception with the specified detail message.

@@ -4,8 +4,10 @@ import com.github.thkwag.searchable.core.condition.SearchCondition;
 import org.springframework.data.domain.Page;
 import org.springframework.lang.NonNull;
 
+import javax.persistence.NonUniqueResultException;
 import java.util.Optional;
 
+@SuppressWarnings({"unused"})
 public interface SearchableService<T> {
     /**
      * Search entities with given search conditions
@@ -25,7 +27,7 @@ public interface SearchableService<T> {
      *
      * @param searchCondition search conditions
      * @return the entity matching the conditions
-     * @throws javax.persistence.NonUniqueResultException if more than one entity is found
+     * @throws NonUniqueResultException if more than one entity is found
      */
     @NonNull
     Optional<T> findOneWithSearch(@NonNull SearchCondition<?> searchCondition);

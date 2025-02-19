@@ -52,14 +52,14 @@ public class DescriptionGenerator {
                 Object exampleValue = OpenApiDocUtils.getExampleValue(field);
 
                 description.append("| ").append(fieldName).append(" | ");
-                description.append("").append(field.getType().getSimpleName()).append(" | ");
+                description.append(field.getType().getSimpleName()).append(" | ");
                 description.append(fieldDescription).append(" | ");
                 StringJoiner operationJoiner = new StringJoiner(", ");
                 for (SearchOperator op : searchOp.operators()) {
-                    operationJoiner.add("" + OpenApiDocUtils.getOperationDescription(op) + "");
+                    operationJoiner.add(OpenApiDocUtils.getOperationDescription(op));
                 }
                 description.append(operationJoiner).append(" | ");
-                description.append("").append(exampleValue).append(" |\n");
+                description.append(exampleValue).append(" |\n");
             }
         }
         description.append("\n");
@@ -131,9 +131,7 @@ public class DescriptionGenerator {
 
             if (isComplete) {
                 for (SearchOperator operator : searchableField.operators()) {
-                    if (!first) {
-                        example.append("&");
-                    }
+                    example.append("&");
                     appendOperationExample(example, field, operator, fieldName);
                 }
                 if (searchableField.sortable()) {

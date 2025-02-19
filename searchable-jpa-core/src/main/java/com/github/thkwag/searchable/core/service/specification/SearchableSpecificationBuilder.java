@@ -187,11 +187,6 @@ public class SearchableSpecificationBuilder<T> {
         int page = pageNum != null ? Math.max(0, pageNum) : 0;
         int size = sizeNum != null ? (sizeNum > 0 ? sizeNum : DEFAULT_PAGE_SIZE) : DEFAULT_PAGE_SIZE;
 
-        // Skip pagination if both page and size are 0 (fetch all data)
-        if (page == 0 && size == 0) {
-            return PageRequest.of(page, size, createSort());
-        }
-
         return PageRequest.of(page, size, createSort());
     }
 }

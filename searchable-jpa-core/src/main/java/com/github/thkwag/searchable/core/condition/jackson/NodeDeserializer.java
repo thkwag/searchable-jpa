@@ -13,30 +13,23 @@ import com.github.thkwag.searchable.core.condition.operator.LogicalOperator;
 import com.github.thkwag.searchable.core.condition.operator.SearchOperator;
 import com.github.thkwag.searchable.core.exception.SearchableValidationException;
 import com.github.thkwag.searchable.core.i18n.MessageUtils;
-import com.github.thkwag.searchable.core.utils.SearchableValueParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * Custom deserializer for Node interface implementations.
  * Handles deserialization of both Condition and Group nodes.
  */
+@Setter
 public class NodeDeserializer extends JsonDeserializer<Node> {
-    private static final Logger log = LoggerFactory.getLogger(NodeDeserializer.class);
-    private final Map<String, Class<?>> fieldTypeCache = new HashMap<>();
-    private Class<?> dtoClass;  // DTO 클래스 정보 저장
 
-    public void setDtoClass(Class<?> dtoClass) {
-        this.dtoClass = dtoClass;
-    }
-    
+    @SuppressWarnings("unused")
+    private Class<?> dtoClass;
+
     @JsonCreator
     public NodeDeserializer() {
     }
