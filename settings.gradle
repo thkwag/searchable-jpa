@@ -1,8 +1,15 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = 'searchable-jpa'
 include 'searchable-jpa-core'
 include 'searchable-jpa-openapi'
-include 'searchable-jpa-example'
 include 'spring-boot-starter-searchable-jpa'
+include 'searchable-jpa-example'
 
 def props = new Properties()
 def propertiesFile = file("gradle.properties")
@@ -25,6 +32,13 @@ if (propertiesFile.exists()) {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        mavenCentral()
+        maven {
+            url = uri("https://repo.eclipse.org/content/groups/releases")
+        }
+        maven {
+            url = uri("https://repo.eclipse.org/content/repositories/releases")
+        }
         maven {
             url = uri("https://maven.pkg.github.com/thkwag/searchable-jpa")
             credentials {
@@ -32,6 +46,5 @@ dependencyResolutionManagement {
                 password = props.getProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
             }
         }
-        mavenCentral()
     }
 }

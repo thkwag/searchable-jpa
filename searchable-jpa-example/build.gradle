@@ -29,4 +29,17 @@ dependencies {
 
 bootJar {
     enabled = true
-} 
+    archiveClassifier = ''
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        )
+    }
+}
+
+jar {
+    enabled = false
+}

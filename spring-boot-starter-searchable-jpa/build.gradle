@@ -49,13 +49,11 @@ jar {
     enabled = true
     archiveClassifier = ''
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from sourceSets.main.output
+    
     manifest {
         attributes(
-            'Spring-Boot-Version': springBootVersion,
-            'Spring-Boot-Classes': 'BOOT-INF/classes/',
-            'Spring-Boot-Lib': 'BOOT-INF/lib/',
-            'Spring-Configuration-Metadata-Present': 'true'
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
         )
     }
 }

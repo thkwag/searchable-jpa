@@ -7,6 +7,7 @@ plugins {
 
 ext {
     springBootVersion = '2.7.18'
+    eclipseTransformerVersion = '0.2.0'
 }
 
 allprojects {
@@ -30,11 +31,40 @@ subprojects {
     if (project.name != 'searchable-jpa-example') {
         apply plugin: 'maven-publish'
         
+        configurations {
+            transformer
+        }
+
+        dependencies {
+            transformer "org.eclipse.transformer:org.eclipse.transformer.cli:${eclipseTransformerVersion}"
+        }
+
+        task transformForJakarta(type: JavaExec) {
+            classpath = configurations.transformer
+            mainClass = 'org.eclipse.transformer.jakarta.JakartaTransformer'
+            
+            def outputJar = file("${buildDir}/libs/${project.name}-jakarta-${project.version}.jar")
+            outputs.file(outputJar)
+            
+            def inputJar = tasks.jar.archiveFile.get().asFile
+            args = [
+                '--overwrite',
+                '--quiet',
+                inputJar.absolutePath,
+                outputJar.absolutePath
+            ]
+            
+            standardOutput = new ByteArrayOutputStream()
+            errorOutput = new ByteArrayOutputStream()
+        }
+
         publishing {
             publications {
                 mavenJava(MavenPublication) {
                     from components.java
 
+                    artifact source: tasks.transformForJakarta.outputs.files.singleFile, classifier: 'jakarta'
+                    
                     pom {
                         def metadata = [
                             'searchable-jpa-core': [
@@ -91,6 +121,10 @@ subprojects {
                 }
             }
         }
+
+        tasks.transformForJakarta.dependsOn tasks.jar
+        tasks.publish.dependsOn tasks.transformForJakarta
+        tasks.assemble.dependsOn tasks.transformForJakarta
     }
 
     java {
