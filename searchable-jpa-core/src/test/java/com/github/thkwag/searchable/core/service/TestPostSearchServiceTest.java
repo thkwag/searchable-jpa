@@ -293,8 +293,7 @@ class TestPostSearchServiceTest {
                 .containsExactlyInAnyOrder(post1.getId(), post4.getId(), post5.getId());
     }
 
-    @SuppressWarnings("unused")
-@Test
+    @Test
     @DisplayName("Search posts with extremely complex nested conditions")
     void searchWithSuperComplexNestedConditions() throws JsonProcessingException {
         // Given
@@ -359,7 +358,70 @@ class TestPostSearchServiceTest {
         assertThat(result.getContent())
                 .hasSize(5)
                 .extracting(TestPost::getId)
-                .containsExactlyInAnyOrder(27L, 28L, 31L, 30L, 25L);
+                .containsExactlyInAnyOrder(
+                        post4.getId(),  // Technical Review Post (1000 views)
+                        post5.getId(),  // VIP Announcement (800 views)
+                        post8.getId(),  // Technical Deep Dive (750 views)
+                        post7.getId(),  // Premium Special Post (600 views)
+                        post2.getId()   // Premium Content Special Post (500 views)
+                );
+    }
+
+    @Test
+    @DisplayName("Search posts by id field")
+    void searchById() {
+        // when
+        SearchCondition<TestPostSearchDTO> condition = SearchConditionBuilder.create(TestPostSearchDTO.class)
+                .where(group -> group
+                        .equals("id", post1.getId()))
+                .build();
+
+        Page<TestPost> result = searchService.findAllWithSearch(condition);
+
+        // then
+        assertThat(result.getContent())
+                .hasSize(1)
+                .extracting("id")
+                .containsExactly(post1.getId());
+    }
+
+    @Test
+    @DisplayName("Search posts by nested entity id (author and comments)")
+    void searchByNestedEntityId() {
+        // given
+        Long authorId = post1.getAuthor().getId();
+        Long commentId = post1.getComments().get(0).getId();
+
+        // when - search by author id
+        SearchCondition<TestPostSearchDTO> authorCondition = SearchConditionBuilder.create(TestPostSearchDTO.class)
+                .where(group -> group
+                        .equals("authorId", authorId))
+                .build();
+
+        Page<TestPost> authorResult = searchService.findAllWithSearch(authorCondition);
+
+        // then - should find all posts by the author
+        assertThat(authorResult.getContent())
+                .extracting("author.id")
+                .containsOnly(authorId);
+
+        // when - search by comment id
+        SearchCondition<TestPostSearchDTO> commentCondition = SearchConditionBuilder.create(TestPostSearchDTO.class)
+                .where(group -> group
+                        .equals("commentId", commentId))
+                .build();
+
+        Page<TestPost> commentResult = searchService.findAllWithSearch(commentCondition);
+
+        // then - should find the post containing the comment
+        assertThat(commentResult.getContent())
+                .hasSize(1)
+                .first()
+                .satisfies(post -> {
+                    assertThat(post.getComments())
+                            .extracting("id")
+                            .contains(commentId);
+                });
     }
 
     private void addComment(TestPost post, TestAuthor author, String content) {

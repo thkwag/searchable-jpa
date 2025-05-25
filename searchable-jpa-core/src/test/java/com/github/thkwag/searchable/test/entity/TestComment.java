@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "test_comment")
-public class TestComment {
+public class TestComment extends AuditingBaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long commentId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -23,7 +23,7 @@ public class TestComment {
     @JoinColumn(name = "author_id", nullable = false)
     private TestAuthor author;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private TestPost post;
 
@@ -40,5 +40,17 @@ public class TestComment {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    //----------------------------------
+
+    @Override
+    public Long getId() {
+        return this.commentId;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.commentId = id;
     }
 }

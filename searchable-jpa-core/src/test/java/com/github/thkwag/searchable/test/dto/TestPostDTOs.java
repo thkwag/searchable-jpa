@@ -18,8 +18,14 @@ public class TestPostDTOs {
     @Setter
     public static class TestPostSearchDTO {
 
-        @SearchableField(entityField = "id", operators = {EQUALS})
+        @SearchableField(entityField = "postId", operators = {EQUALS})
         private Long id;
+
+        @SearchableField(entityField = "author.authorId", operators = {EQUALS})
+        private Long authorId;
+
+        @SearchableField(entityField = "comments.commentId", operators = {EQUALS})
+        private Long commentId;
 
         @Size(min = 5, message = "Title must be at least 5 characters")
         @Size(max = 100, message = "Title cannot exceed 100 characters")

@@ -13,7 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.PluralAttribute;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -133,50 +132,107 @@ public class SearchableSpecificationBuilder<T> {
     private Specification<T> buildSpecification() {
         return (root, query, cb) -> {
             // Apply fetch joins only for non-count queries
+            Set<String> joinPaths = new HashSet<>();
             if (!query.getResultType().equals(Long.class)) {
-                Set<Class<?>> processedEntityTypes = new HashSet<>();
-                processedEntityTypes.add(entityClass);
-                applyFetchJoins(root, processedEntityTypes);
+                joinPaths = extractJoinPaths(condition.getNodes());
+            }
+
+            // Apply joins in correct order
+            if (!joinPaths.isEmpty()) {
+                applyJoins(root, joinPaths);
                 query.distinct(true);
             }
 
             JoinManager<T> joinManager = new JoinManager<>(entityManager, root);
             PredicateBuilder<T> predicateBuilder = new PredicateBuilder<>(cb, joinManager);
             SpecificationBuilder<T> specBuilder = new SpecificationBuilder<>(predicateBuilder);
+
             return createPredicates(root, query, cb, specBuilder);
         };
     }
 
-    private void applyFetchJoins(Root<T> root, Set<Class<?>> processedEntityTypes) {
-        ManagedType<?> managedType = entityManager.getMetamodel().managedType(root.getJavaType());
-
-        // Process ToOne relationships first
-        for (Attribute<?, ?> attribute : managedType.getAttributes()) {
-            if (attribute.isAssociation() && !attribute.isCollection()) {
-                Class<?> targetType = attribute.getJavaType();
-                if (!processedEntityTypes.contains(targetType)) {
-                    root.fetch(attribute.getName(), JoinType.LEFT);
-                    processedEntityTypes.add(targetType);
+    private Set<String> extractJoinPaths(List<Node> nodes) {
+        Set<String> joinPaths = new HashSet<>();
+        if (nodes == null) return joinPaths;
+        
+        for (Node node : nodes) {
+            if (node instanceof SearchCondition.Condition) {
+                SearchCondition.Condition condition = (SearchCondition.Condition) node;
+                String entityField = condition.getEntityField();
+                if (entityField != null && !entityField.isEmpty()) {
+                    String[] pathParts = entityField.split("\\.");
+                    StringBuilder path = new StringBuilder();
+                    
+                    // Add all intermediate paths for nested joins
+                    for (int i = 0; i < pathParts.length - 1; i++) {
+                        if (path.length() > 0) {
+                            path.append(".");
+                        }
+                        path.append(pathParts[i]);
+                        joinPaths.add(path.toString());
+                    }
                 }
+            } else if (node instanceof SearchCondition.Group) {
+                joinPaths.addAll(extractJoinPaths(node.getNodes()));
+            }
+        }
+        
+        return joinPaths;
+    }
+
+    private void applyJoins(Root<T> root, Set<String> paths) {
+        // 1. Clear existing joins
+        Set<Join<T, ?>> joins = (Set<Join<T, ?>>) root.getJoins();
+        joins.clear();
+
+        // 2. Find first ToMany path
+        String toManyFetchPath = null;
+        for (String path : paths) {
+            if (isToManyPath(root, path)) {
+                toManyFetchPath = path;
+                break;
             }
         }
 
-        // Process ToMany relationships and their ToOne relationships
-        for (Attribute<?, ?> attribute : managedType.getAttributes()) {
-            if (attribute.isAssociation() && attribute.isCollection()) {
-                PluralAttribute<?, ?, ?> pluralAttribute = (PluralAttribute<?, ?, ?>) attribute;
-                Class<?> elementType = pluralAttribute.getElementType().getJavaType();
-
-                Fetch<?, ?> collectionFetch = root.fetch(attribute.getName(), JoinType.LEFT);
-
-                // Process ToOne relationships of collection entities
-                ManagedType<?> elementManagedType = entityManager.getMetamodel().managedType(elementType);
-                for (Attribute<?, ?> elementAttribute : elementManagedType.getAttributes()) {
-                    if (elementAttribute.isAssociation() && !elementAttribute.isCollection()) {
-                        collectionFetch.fetch(elementAttribute.getName(), JoinType.LEFT);
-                    }
-                }
+        // 3. Apply fetch joins first
+        for (String path : paths) {
+            if (!isToManyPath(root, path) || path.equals(toManyFetchPath)) {
+                root.fetch(path, JoinType.LEFT);
             }
+        }
+
+        // 4. Apply regular joins for remaining ToMany paths
+        for (String path : paths) {
+            if (isToManyPath(root, path) && !path.equals(toManyFetchPath)) {
+                root.join(path, JoinType.LEFT);
+            }
+        }
+    }
+
+    private boolean isToManyPath(Root<T> root, String path) {
+        if (path == null || path.trim().isEmpty()) {
+            return false;
+        }
+
+        try {
+            String[] parts = path.split("\\.");
+            From<?, ?> from = root;
+            Class<?> currentType = root.getJavaType();
+
+            for (String part : parts) {
+                ManagedType<?> managedType = entityManager.getMetamodel().managedType(currentType);
+                Attribute<?, ?> attribute = managedType.getAttribute(part);
+                
+                if (attribute.isCollection()) {
+                    return true;
+                }
+                
+                currentType = attribute.getJavaType();
+            }
+            
+            return false;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid path: " + path, e);
         }
     }
 

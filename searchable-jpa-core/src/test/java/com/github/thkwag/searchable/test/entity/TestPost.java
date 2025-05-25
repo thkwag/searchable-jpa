@@ -13,14 +13,13 @@ import java.util.List;
 @Getter
 @Setter
 @ToString(exclude = {"author", "comments"})
-@EqualsAndHashCode(exclude = {"author", "comments"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TestPost {
+public class TestPost extends AuditingBaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long postId;
 
     @Column(nullable = false)
     private String title;
@@ -75,5 +74,17 @@ public class TestPost {
     public void removeComment(TestComment comment) {
         comments.remove(comment);
         comment.setPost(null);
+    }
+
+    //----------------------------------
+
+    @Override
+    public Long getId() {
+        return this.postId;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.postId = id;
     }
 }
