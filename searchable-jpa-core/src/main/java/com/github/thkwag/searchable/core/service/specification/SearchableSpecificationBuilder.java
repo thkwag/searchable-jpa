@@ -3,11 +3,14 @@ package com.github.thkwag.searchable.core.service.specification;
 import com.github.thkwag.searchable.core.condition.SearchCondition;
 import com.github.thkwag.searchable.core.condition.SearchCondition.Node;
 import com.github.thkwag.searchable.core.condition.operator.LogicalOperator;
+import com.github.thkwag.searchable.core.service.cursor.CursorPageConverter;
 import com.github.thkwag.searchable.core.service.join.JoinManager;
 import lombok.NonNull;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
@@ -30,20 +33,24 @@ public class SearchableSpecificationBuilder<T> {
     private final SearchCondition<?> condition;
     private final EntityManager entityManager;
     private final Class<T> entityClass;
+    private final JpaSpecificationExecutor<T> specificationExecutor;
 
     public SearchableSpecificationBuilder(@NonNull SearchCondition<?> condition,
                                           @NonNull EntityManager entityManager,
-                                          @NonNull Class<T> entityClass) {
+                                          @NonNull Class<T> entityClass,
+                                          @NonNull JpaSpecificationExecutor<T> specificationExecutor) {
         this.condition = condition;
         this.entityManager = entityManager;
         this.entityClass = entityClass;
+        this.specificationExecutor = specificationExecutor;
     }
 
     public static <T> SearchableSpecificationBuilder<T> of(
             @NonNull SearchCondition<?> condition,
             @NonNull EntityManager entityManager,
-            @NonNull Class<T> entityClass) {
-        return new SearchableSpecificationBuilder<>(condition, entityManager, entityClass);
+            @NonNull Class<T> entityClass,
+            @NonNull JpaSpecificationExecutor<T> specificationExecutor) {
+        return new SearchableSpecificationBuilder<>(condition, entityManager, entityClass, specificationExecutor);
     }
 
     /**
@@ -119,10 +126,54 @@ public class SearchableSpecificationBuilder<T> {
     /**
      * Builds SpecificationWithPageable from SearchCondition.
      * Thread-safe method that creates new instance each time.
-     *
+     * 
+     * @deprecated Use buildAndExecuteWithCursor() instead for cursor-based pagination
      * @return SpecificationWithPageable containing specification and page request
      */
+    @Deprecated
     public SpecificationWithPageable<T> build() {
+        return new SpecificationWithPageable<>(
+                buildSpecification(),
+                buildPageRequest()
+        );
+    }
+
+    /**
+     * Executes cursor-based pagination query directly.
+     * This method bypasses the traditional SpecificationWithPageable approach
+     * and executes cursor-based pagination internally while maintaining API compatibility.
+     *
+     * @return Page object with cursor-based pagination results
+     */
+    public Page<T> buildAndExecuteWithCursor() {
+        PageRequest originalPageRequest = buildPageRequest();
+        Specification<T> baseSpecification = buildSpecification();
+        
+        CursorPageConverter<T> converter = new CursorPageConverter<>(specificationExecutor, entityClass);
+        return converter.convertToCursorBasedPage(originalPageRequest, baseSpecification);
+    }
+
+    /**
+     * Executes cursor-based pagination without total count calculation.
+     * This is an optimized version that avoids expensive count queries.
+     *
+     * @return Page object with cursor-based pagination results (without total count)
+     */
+    public Page<T> buildAndExecuteWithCursorOptimized() {
+        PageRequest originalPageRequest = buildPageRequest();
+        Specification<T> baseSpecification = buildSpecification();
+        
+        CursorPageConverter<T> converter = new CursorPageConverter<>(specificationExecutor, entityClass);
+        return converter.convertToCursorBasedPageWithoutCount(originalPageRequest, baseSpecification);
+    }
+
+    /**
+     * Builds only the specification part for operations that don't need pagination.
+     * This method is used for count, exists, delete, and update operations.
+     *
+     * @return SpecificationWithPageable containing specification without cursor pagination
+     */
+    public SpecificationWithPageable<T> buildSpecificationOnly() {
         return new SpecificationWithPageable<>(
                 buildSpecification(),
                 buildPageRequest()

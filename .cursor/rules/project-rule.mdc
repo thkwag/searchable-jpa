@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Development Rules
+
+## Code Style Guidelines
+
+- Do not use emojis in code or documentation unless specifically requested
+- Remove any emojis found during code modifications
+- Do not add comments to indicate changes from previous code versions
+- Do not insert defensive logic when unable to find the root cause of a problem - find and solve the actual issue
+- Do not generate debug logs unless specifically requested
+
+## Development and Testing

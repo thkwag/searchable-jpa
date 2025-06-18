@@ -42,32 +42,42 @@ public class DefaultSearchableService<T, ID> implements SearchableService<T> {
     }
 
     protected SpecificationWithPageable<T> createSpecification(SearchCondition<?> searchCondition) {
-        return SearchableSpecificationBuilder.of(searchCondition, entityManager, entityClass).build();
+        return SearchableSpecificationBuilder.of(searchCondition, entityManager, entityClass, specificationExecutor).buildSpecificationOnly();
+    }
+
+    /**
+     * Creates SearchableSpecificationBuilder with cursor support.
+     */
+    protected SearchableSpecificationBuilder<T> createSpecificationBuilder(SearchCondition<?> searchCondition) {
+        return SearchableSpecificationBuilder.of(searchCondition, entityManager, entityClass, specificationExecutor);
     }
 
     @Override
     @NonNull
     public Page<T> findAllWithSearch(@NonNull SearchCondition<?> searchCondition) {
-        SpecificationWithPageable<T> spec = createSpecification(searchCondition);
-        return specificationExecutor.findAll(spec.getSpecification(), spec.getPageRequest());
+        // Use cursor-based pagination for improved performance
+        SearchableSpecificationBuilder<T> builder = createSpecificationBuilder(searchCondition);
+        return builder.buildAndExecuteWithCursor();
     }
 
     @Override
     @NonNull
     public <P> Page<P> findAllWithSearch(@NonNull SearchCondition<?> searchCondition, Class<P> projectionClass) {
-        SpecificationWithPageable<T> spec = createSpecification(searchCondition);
-
         if (!projectionClass.isInterface()) {
             throw new SearchableConfigurationException("Projection class must be an interface");
         }
 
-        return specificationExecutor.findAll(spec.getSpecification(), spec.getPageRequest())
-                .map(entity -> projectionFactory.createProjection(projectionClass, entity));
+        // Use cursor-based pagination and apply projection
+        SearchableSpecificationBuilder<T> builder = createSpecificationBuilder(searchCondition);
+        Page<T> entityPage = builder.buildAndExecuteWithCursor();
+        
+        return entityPage.map(entity -> projectionFactory.createProjection(projectionClass, entity));
     }
 
     @Override
     @NonNull
     public Optional<T> findOneWithSearch(@NonNull SearchCondition<?> searchCondition) {
+        // Use traditional specification approach for single result
         SpecificationWithPageable<T> spec = createSpecification(searchCondition);
         return specificationExecutor.findOne(spec.getSpecification());
     }
@@ -75,14 +85,15 @@ public class DefaultSearchableService<T, ID> implements SearchableService<T> {
     @Override
     @NonNull
     public Optional<T> findFirstWithSearch(@NonNull SearchCondition<?> searchCondition) {
-        SpecificationWithPageable<T> spec = createSpecification(searchCondition);
-        return specificationExecutor.findAll(spec.getSpecification(), spec.getPageRequest().withPage(0).first())
-                .stream()
-                .findFirst();
+        // Use cursor-based pagination for first record
+        SearchableSpecificationBuilder<T> builder = createSpecificationBuilder(searchCondition);
+        Page<T> firstPage = builder.buildAndExecuteWithCursor();
+        return firstPage.getContent().stream().findFirst();
     }
 
     @Override
     public long deleteWithSearch(@NonNull SearchCondition<?> searchCondition) {
+        // Use specification only for delete operations (no pagination needed)
         SpecificationWithPageable<T> spec = createSpecification(searchCondition);
         List<T> toDelete = specificationExecutor.findAll(spec.getSpecification());
         repository.deleteAll(toDelete);
@@ -91,12 +102,14 @@ public class DefaultSearchableService<T, ID> implements SearchableService<T> {
 
     @Override
     public long countWithSearch(@NonNull SearchCondition<?> searchCondition) {
+        // Use specification only for count operations (no pagination needed)
         SpecificationWithPageable<T> spec = createSpecification(searchCondition);
         return specificationExecutor.count(spec.getSpecification());
     }
 
     @Override
     public boolean existsWithSearch(@NonNull SearchCondition<?> searchCondition) {
+        // Use specification only for exists operations (no pagination needed)
         SpecificationWithPageable<T> spec = createSpecification(searchCondition);
         return specificationExecutor.exists(spec.getSpecification());
     }
@@ -117,7 +130,7 @@ public class DefaultSearchableService<T, ID> implements SearchableService<T> {
         }
 
         try {
-            // Find entities to update using specification
+            // Find entities to update using specification (no pagination needed)
             SpecificationWithPageable<T> specification = createSpecification(searchCondition);
             List<T> entitiesToUpdate = specificationExecutor.findAll(specification.getSpecification());
 
