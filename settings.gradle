@@ -40,7 +40,7 @@ dependencyResolutionManagement {
             url = uri("https://repo.eclipse.org/content/repositories/releases")
         }
         maven {
-            url = uri("https://maven.pkg.github.com/thkwag/searchable-jpa")
+            url = uri("https://maven.pkg.github.com/simplecore-inc/searchable-jpa")
             credentials {
                 username = props.getProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
                 password = props.getProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")

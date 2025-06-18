@@ -10,7 +10,7 @@ ext {
 }
 
 allprojects {
-    group = 'com.github.thkwag.searchable'
+    group = 'dev.simplecore.searchable'
     version = '0.0.4-SNAPSHOT'
     
     System.setProperty("spring.boot.version.check.enabled", "false")
@@ -57,7 +57,7 @@ subprojects {
                         } else {
                             throw new GradleException("No metadata found for project: ${project.name}")
                         }
-                        url = 'https://github.com/thkwag/searchable-jpa'
+                        url = 'https://github.com/simplecore-inc/searchable-jpa'
                         
                         licenses {
                             license {
@@ -72,9 +72,9 @@ subprojects {
                             }
                         }
                         scm {
-                            connection = 'scm:git:git://github.com/thkwag/searchable-jpa.git'
-                            developerConnection = 'scm:git:ssh://github.com:thkwag/searchable-jpa.git'
-                            url = 'https://github.com/thkwag/searchable-jpa'
+                            connection = 'scm:git:git://github.com/simplecore-inc/searchable-jpa.git'
+                            developerConnection = 'scm:git:ssh://github.com:simplecore-inc/searchable-jpa.git'
+                            url = 'https://github.com/simplecore-inc/searchable-jpa'
                         }
                     }
                 }
@@ -83,7 +83,7 @@ subprojects {
             repositories {
                 maven {
                     name = "GitHubPackages"
-                    url = uri("https://maven.pkg.github.com/thkwag/searchable-jpa")
+                    url = uri("https://maven.pkg.github.com/simplecore-inc/searchable-jpa")
                     credentials {
                         username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
                         password = project.findProperty("gpr.token") ?: System.getenv("TOKEN")

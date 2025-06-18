@@ -29,7 +29,7 @@ spring:
 logging:
   level:
     root: INFO
-    com.github.thkwag.searchable: DEBUG
+    dev.simplecore.searchable: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: DEBUG
     org.springframework.boot.devtools: DEBUG
@@ -46,7 +46,7 @@ springdoc:
     urls:
       - url: /api-docs
         name: API Documentation
-  packages-to-scan: com.github.thkwag.searchable.example
+  packages-to-scan: dev.simplecore.searchable.example
   paths-to-match:
     - /api/**
     - /users/**

@@ -20,7 +20,7 @@ Searchable JPA는 Spring Data JPA를 확장하여 동적 검색, 정렬, 페이�
 ### 1. 의존성 추가
 
 ```gradle
-implementation 'com.github.thkwag.searchable:spring-boot-starter-searchable-jpa:0.0.4-SNAPSHOT'
+implementation 'dev.simplecore.searchable:spring-boot-starter-searchable-jpa:0.0.4-SNAPSHOT'
 ```
 
 ### 2. DTO 클래스 정의
@@ -127,7 +127,7 @@ http://localhost:8080/swagger-ui.html
 
 ## 지원
 
-- **이슈**: [GitHub Issues](https://github.com/thkwag/searchable-jpa/issues)
+- **이슈**: [GitHub Issues](https://github.com/simplecore-inc/searchable-jpa/issues)
 - **문서**: [Documentation](docs/ko/README.md)
 - **예제**: [Example Application](searchable-jpa-example/)
 

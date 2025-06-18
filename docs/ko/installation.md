@@ -18,7 +18,7 @@
 
 ```gradle
 dependencies {
-    implementation 'com.github.thkwag.searchable:spring-boot-starter-searchable-jpa:0.0.4-SNAPSHOT'
+    implementation 'dev.simplecore.searchable:spring-boot-starter-searchable-jpa:0.0.4-SNAPSHOT'
 }
 ```
 
@@ -26,7 +26,7 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>com.github.thkwag.searchable</groupId>
+    <groupId>dev.simplecore.searchable</groupId>
     <artifactId>spring-boot-starter-searchable-jpa</artifactId>
     <version>0.0.4-SNAPSHOT</version>
 </dependency>
@@ -40,7 +40,7 @@ dependencies {
 
 ```gradle
 dependencies {
-    implementation 'com.github.thkwag.searchable:searchable-jpa-core:0.0.4-SNAPSHOT'
+    implementation 'dev.simplecore.searchable:searchable-jpa-core:0.0.4-SNAPSHOT'
 }
 ```
 
@@ -48,8 +48,8 @@ dependencies {
 
 ```gradle
 dependencies {
-    implementation 'com.github.thkwag.searchable:searchable-jpa-core:0.0.4-SNAPSHOT'
-    implementation 'com.github.thkwag.searchable:searchable-jpa-openapi:0.0.4-SNAPSHOT'
+    implementation 'dev.simplecore.searchable:searchable-jpa-core:0.0.4-SNAPSHOT'
+    implementation 'dev.simplecore.searchable:searchable-jpa-openapi:0.0.4-SNAPSHOT'
 }
 ```
 
@@ -159,7 +159,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 ```yaml
 logging:
   level:
-    com.github.thkwag.searchable: DEBUG
+    dev.simplecore.searchable: DEBUG
     org.springframework.data.jpa: DEBUG
 ```
 

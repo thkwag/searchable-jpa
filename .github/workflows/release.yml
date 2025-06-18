@@ -43,8 +43,8 @@ jobs:
       - name: Update version in build.gradle
         run: |
           sed -i "s/version = '.*'/version = '${{ github.event.inputs.version }}'/" build.gradle
-          git config --global user.email "thkwag@gmail.com"
-          git config --global user.name "thkwag"
+          git config --global user.email "thk@simplecore.kr"
+          git config --global user.name "Taehwan Kwag"
           git add build.gradle
           git commit -m "release: v${{ github.event.inputs.version }}"
 

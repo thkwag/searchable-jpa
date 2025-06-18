@@ -39,7 +39,7 @@ public class PostService extends DefaultSearchableService<Post> {
 
 ```xml
 <dependency>
-    <groupId>com.github.thkwag.searchable</groupId>
+    <groupId>dev.simplecore.searchable</groupId>
     <artifactId>spring-boot-starter-searchable-jpa</artifactId>
     <version>0.0.4-SNAPSHOT</version>
 </dependency>
@@ -236,7 +236,7 @@ spring:
 
 1. **Spring Boot Starter 의존성 확인**:
 ```gradle
-implementation 'com.github.thkwag.searchable:spring-boot-starter-searchable-jpa:0.0.4-SNAPSHOT'
+implementation 'dev.simplecore.searchable:spring-boot-starter-searchable-jpa:0.0.4-SNAPSHOT'
 ```
 
 2. **서비스 클래스가 올바르게 정의되었는지 확인**:
@@ -336,7 +336,7 @@ long totalElements = page.getTotalElements();
 
 1. **OpenAPI 모듈 의존성**:
 ```gradle
-implementation 'com.github.thkwag.searchable:searchable-jpa-openapi:0.0.4-SNAPSHOT'
+implementation 'dev.simplecore.searchable:searchable-jpa-openapi:0.0.4-SNAPSHOT'
 ```
 
 2. **@SearchableParams 어노테이션 사용**:
@@ -412,7 +412,7 @@ public class SearchMetrics {
 
 ---
 
-더 많은 질문이나 문제가 있으시면 [GitHub Issues](https://github.com/thkwag/searchable-jpa/issues)에 문의해 주세요.
+더 많은 질문이나 문제가 있으시면 [GitHub Issues](https://github.com/simplecore-inc/searchable-jpa/issues)에 문의해 주세요.
 
 ---
 

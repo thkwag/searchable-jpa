@@ -13,7 +13,7 @@ Searchable JPA는 OpenAPI 3.0 및 Swagger UI와의 완벽한 통합을 제공합
 ```gradle
 dependencies {
     // Searchable JPA OpenAPI 모듈
-    implementation 'com.github.thkwag.searchable:searchable-jpa-openapi:0.0.4-SNAPSHOT'
+    implementation 'dev.simplecore.searchable:searchable-jpa-openapi:0.0.4-SNAPSHOT'
     
     // SpringDoc OpenAPI (Swagger)
     implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
